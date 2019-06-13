@@ -70,6 +70,7 @@ func (ms *mService) Get(job, instance string) (MetadataCache, error) {
 	return nil, errors.New("unable to find a target with job=" + job + ", and instance=" + instance)
 }
 
+// ObservedValue is used to store the start time, first observed value and last seen value of cumulative data
 type ObservedValue struct {
 	Ts            int64
 	StartValue    float64

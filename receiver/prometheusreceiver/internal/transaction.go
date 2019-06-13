@@ -78,8 +78,8 @@ func (tr *transaction) Add(l labels.Labels, t int64, v float64) (uint64, error) 
 // returning an error from this method can cause the whole appending transaction to be aborted and fail
 func (tr *transaction) AddFast(ls labels.Labels, _ uint64, t int64, v float64) error {
 	// Important, must handle. prometheus will still try to feed the appender some data even if it failed to
-	// scrape the remote target,  if the previous scrape was success and some data were cached internally 
-	// in our case, we don't need these data, simply drop them shall be good enough. more details: 
+	// scrape the remote target,  if the previous scrape was success and some data were cached internally
+	// in our case, we don't need these data, simply drop them shall be good enough. more details:
 	// https://github.com/prometheus/prometheus/blob/851131b0740be7291b98f295567a97f32fffc655/scrape/scrape.go#L933-L935
 	if math.IsNaN(v) {
 		return nil
@@ -121,14 +121,14 @@ func (tr *transaction) Commit() error {
 		// never added any data complexValue, that the transaction has not been initialized.
 		return nil
 	}
-	
+
 	// evict unused cache values
 	defer func() {
 		if tr.mc != nil {
 			tr.mc.EvictUnused()
 		}
 	}()
-	
+
 	md, err := tr.metricBuilder.Build()
 	if err != nil {
 		return err

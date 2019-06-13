@@ -291,7 +291,7 @@ type dataPoint struct {
 }
 
 // metricGroup, represents a single metric of a metric family. for example a histogram metric is usually represent by
-// a couple data complexValue (buckets and count/sum), a group of a metric family always share a same set of tags. for 
+// a couple data complexValue (buckets and count/sum), a group of a metric family always share a same set of tags. for
 // simple types like counter and gauge, each data point is a group of itself
 type metricGroup struct {
 	startTs      int64

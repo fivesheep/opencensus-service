@@ -101,7 +101,7 @@ func Test_transaction(t *testing.T) {
 		if got := tr.Commit(); got != nil {
 			t.Errorf("expecting nil from Commit() but got err %v", got)
 		}
-		
+
 		if mcon.md != nil {
 			t.Errorf("wanted nil, got %v\n", mcon.md)
 		}

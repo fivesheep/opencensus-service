@@ -82,9 +82,9 @@ func (b *metricBuilder) AddDataPoint(ls labels.Labels, t int64, v float64) error
 		b.logger.Infow("skip internal metric", "name", metricName, "ts", t, "value", v, "labels", lm)
 		return nil
 	}
-	
+
 	b.hasData = true
-	
+
 	if b.currentMf != nil && !b.currentMf.IsSameFamily(metricName) {
 		m := b.currentMf.ToMetric()
 		if m != nil {
@@ -149,7 +149,7 @@ func dpgSignature(orderedKnownLabelKeys []string, ls labels.Labels) string {
 		if v == "" {
 			continue
 		}
-		sign = append(sign, k + "=" + v)
+		sign = append(sign, k+"="+v)
 	}
 	return fmt.Sprintf("%#v", sign)
 }

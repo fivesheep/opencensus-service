@@ -225,7 +225,7 @@ func TestEndToEnd(t *testing.T) {
 		{code: 200, data: target2Page1},
 		{code: 200, data: target2Page2},
 	}
-	
+
 	mp := newMockPrometheus(endpoints)
 	cst := httptest.NewServer(mp)
 	defer cst.Close()
@@ -270,7 +270,7 @@ func TestEndToEnd(t *testing.T) {
 		results[m.Node.ServiceInfo.Name] = append(result, m)
 	}
 
-	t.Run("shall-return-two-targets", func(t *testing.T){
+	t.Run("shall-return-two-targets", func(t *testing.T) {
 		if l := len(results); l != 2 {
 			t.Errorf("want 2 targets, but got %v\n", l)
 		}
@@ -314,13 +314,13 @@ func TestEndToEnd(t *testing.T) {
 		// verify the 2nd metricData
 		m2 := mds[1]
 		ts2 := m2.Metrics[0].Timeseries[0].Points[0].Timestamp
-		
-		// ts for metric: `http_requests_total{method="post",code="500"} 3` since this metric is newly created from 
-		// the 2nd successful response, however, there's a 500 response inbetween, the startTimestamp of this metric 
+
+		// ts for metric: `http_requests_total{method="post",code="500"} 3` since this metric is newly created from
+		// the 2nd successful response, however, there's a 500 response inbetween, the startTimestamp of this metric
 		// will be the ts from 2nd scrape even if it failed
-		tsHttpReqCounter500 := m2.Metrics[1].Timeseries[2].StartTimestamp
-		if ! (toUnixNano(ts1) < toUnixNano(tsHttpReqCounter500) && toUnixNano(tsHttpReqCounter500) < toUnixNano(ts2)) {
-			t.Errorf("expect %#v  < %#v < %#v", ts1, tsHttpReqCounter500, ts2)
+		tsHTTPReqCounter500 := m2.Metrics[1].Timeseries[2].StartTimestamp
+		if !(toUnixNano(ts1) < toUnixNano(tsHTTPReqCounter500) && toUnixNano(tsHTTPReqCounter500) < toUnixNano(ts2)) {
+			t.Errorf("expect %#v  < %#v < %#v", ts1, tsHTTPReqCounter500, ts2)
 		}
 
 		want2 := &data.MetricsData{
@@ -381,7 +381,7 @@ func TestEndToEnd(t *testing.T) {
 							},
 						},
 						{
-							StartTimestamp: tsHttpReqCounter500,
+							StartTimestamp: tsHTTPReqCounter500,
 							LabelValues: []*metricspb.LabelValue{
 								{Value: "500", HasValue: true},
 								{Value: "post", HasValue: true},
@@ -592,5 +592,5 @@ func doCompare(t *testing.T, want, got interface{}) {
 }
 
 func toUnixNano(ts *timestamp.Timestamp) int64 {
-	return ts.Seconds * 1000000000 + int64(ts.Nanos)
+	return ts.Seconds*1000000000 + int64(ts.Nanos)
 }

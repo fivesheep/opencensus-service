@@ -46,29 +46,29 @@ func TestOcaStore(t *testing.T) {
 	_ = o.Close()
 
 	app, err = o.Appender()
-	if app != noop  || err != nil {
+	if app != noop || err != nil {
 		t.Fatalf("expect app!=nil and err==nil, got app=%v and err=%v", app, err)
 	}
 }
 
 func TestNoopAppender(t *testing.T) {
-	if _, err:=noop.Add(labels.FromStrings("t", "v"), 1, 1); err == nil {
+	if _, err := noop.Add(labels.FromStrings("t", "v"), 1, 1); err == nil {
 		t.Error("expecting error from Add method of noopApender")
 	}
-	if _, err:=noop.Add(labels.FromStrings("t", "v"), 1, 1); err == nil {
+	if _, err := noop.Add(labels.FromStrings("t", "v"), 1, 1); err == nil {
 		t.Error("expecting error from Add method of noopApender")
 	}
 
-	if err:=noop.AddFast(labels.FromStrings("t", "v"), 0, 1, 1); err == nil {
+	if err := noop.AddFast(labels.FromStrings("t", "v"), 0, 1, 1); err == nil {
 		t.Error("expecting error from AddFast method of noopApender")
 	}
 
-	if err:=noop.Commit(); err == nil {
+	if err := noop.Commit(); err == nil {
 		t.Error("expecting error from Commit method of noopApender")
 	}
 
-	if err:=noop.Rollback(); err != nil {
+	if err := noop.Rollback(); err != nil {
 		t.Error("expecting no error from Rollback method of noopApender")
 	}
-	
+
 }

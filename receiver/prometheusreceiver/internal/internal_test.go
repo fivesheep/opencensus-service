@@ -37,13 +37,13 @@ func init() {
 func newMockMetadataCache(data map[string]scrape.MetricMetadata) *mockMetadataCache {
 	return &mockMetadataCache{
 		mCache: mCache{startValues: make(map[string]*ObservedValue)},
-		data: data,
+		data:   data,
 	}
 }
 
 type mockMetadataCache struct {
 	mCache
-	data map[string]scrape.MetricMetadata
+	data         map[string]scrape.MetricMetadata
 	lastScrapeTs int64
 }
 
@@ -60,7 +60,7 @@ func (m *mockMetadataCache) LastScrapeTime() int64 {
 }
 
 func (m *mockMetadataCache) UpdateLastScrapeTime(ts int64) {
-	m.lastScrapeTs   = ts
+	m.lastScrapeTs = ts
 }
 
 func (m *mockMetadataCache) Metadata(metricName string) (scrape.MetricMetadata, bool) {

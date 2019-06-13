@@ -90,7 +90,7 @@ func (o *ocaStore) Close() error {
 }
 
 // noopAppender, always return error on any operations
-type noopAppender struct {}
+type noopAppender struct{}
 
 func (*noopAppender) Add(l labels.Labels, t int64, v float64) (uint64, error) {
 	return 0, errAlreadyStop

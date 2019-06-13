@@ -728,7 +728,7 @@ func Test_metricBuilder_untype(t *testing.T) {
 							LabelKeys: []*metricspb.LabelKey{{Key: "foo"}}},
 						Timeseries: []*metricspb.TimeSeries{
 							{
-								LabelValues:    []*metricspb.LabelValue{{Value: "bar", HasValue: true}},
+								LabelValues: []*metricspb.LabelValue{{Value: "bar", HasValue: true}},
 								Points: []*metricspb.Point{
 									{Timestamp: timestampFromMs(startTs), Value: &metricspb.Point_DoubleValue{DoubleValue: 100.0}},
 								},
@@ -1696,44 +1696,44 @@ func Test_metricBuilder_summary(t *testing.T) {
 }
 
 func Test_metricBuilder_strangeTimestamp(t *testing.T) {
-	// edge case, simulate cumulative metrics like counter which uses timestamp from original system with value resets 
+	// edge case, simulate cumulative metrics like counter which uses timestamp from original system with value resets
 	// during different scrape runs, however, the metric timestamp is not consistent with lastScrape timestamp
 	mc := newMockMetadataCache(testMetadata)
 	systemTs := startTs + 5*interval
 	b := newMetricBuilder(testNode, mc, testLogger)
 	lbs := createLabels("counter_test")
 	// round 1
-	_ = b.AddDataPoint(lbs,  startTs, 100)
+	_ = b.AddDataPoint(lbs, startTs, 100)
 	_, _ = b.Build()
 	mc.lastScrapeTs = systemTs
-	
+
 	// round 2
-	_ = b.AddDataPoint(lbs,  startTs+interval, 50)
+	_ = b.AddDataPoint(lbs, startTs+interval, 50)
 	md, _ := b.Build()
 	mc.lastScrapeTs += interval
 	if len(md.Metrics) != 0 {
 		t.Errorf("expect to metrics to be empty, but got %v", string(exportertest.ToJSON(md)))
 	}
-	
+
 	// round 3
-	_ = b.AddDataPoint(lbs,  startTs+interval, 75)
+	_ = b.AddDataPoint(lbs, startTs+interval, 75)
 	md, _ = b.Build()
 	mc.lastScrapeTs += interval
-	
-	// check 
+
+	// check
 	if len(md.Metrics) != 1 {
 		t.Error("exepct 1 metric to be return")
 	}
-	
+
 	pv := md.Metrics[0].Timeseries[0].Points[0].Value.(*metricspb.Point_DoubleValue)
 	if pv.DoubleValue != float64(25) {
 		t.Errorf("expect value from the 3rd run to be 25, but got %v", pv.DoubleValue)
-	} 
-	
-	if !reflect.DeepEqual(md.Metrics[0].Timeseries[0].StartTimestamp, timestampFromMs(startTs+interval)){
+	}
+
+	if !reflect.DeepEqual(md.Metrics[0].Timeseries[0].StartTimestamp, timestampFromMs(startTs+interval)) {
 		t.Errorf("timestamp mismatch got %v, want %v", md.Metrics[0].Timeseries[0].StartTimestamp, timestampFromMs(startTs+interval))
 	}
-	
+
 }
 
 func Test_metricBuilder_skipped(t *testing.T) {
@@ -1765,7 +1765,7 @@ func Test_metricBuilder_skipped(t *testing.T) {
 }
 
 func Test_metricBuilder_baddata(t *testing.T) {
-	t.Run("empty-metric-name", func(t *testing.T){
+	t.Run("empty-metric-name", func(t *testing.T) {
 		mc := newMockMetadataCache(testMetadata)
 		b := newMetricBuilder(testNode, mc, testLogger)
 		if err := b.AddDataPoint(labels.FromStrings("a", "b"), startTs, 123); err != errMetricNameNotFound {
@@ -1775,13 +1775,13 @@ func Test_metricBuilder_baddata(t *testing.T) {
 
 		if _, err := b.Build(); err != errNoDataToBuild {
 			t.Error("expecting errNoDataToBuild error, but get nil")
-		}		
+		}
 	})
 
-	t.Run("histogram-datapoint-no-bucket-label", func(t *testing.T){
+	t.Run("histogram-datapoint-no-bucket-label", func(t *testing.T) {
 		mc := newMockMetadataCache(testMetadata)
 		b := newMetricBuilder(testNode, mc, testLogger)
-		if err := b.AddDataPoint(createLabels("hist_test", "k", "v"), startTs, 123); err != nil{
+		if err := b.AddDataPoint(createLabels("hist_test", "k", "v"), startTs, 123); err != nil {
 			t.Errorf("expecting nil for the first time to trigger cache, but get error %v", err)
 		}
 		if err := b.AddDataPoint(createLabels("hist_test", "k", "v"), startTs+interval, 123); err != errEmptyBoundaryLabel {
@@ -1789,17 +1789,16 @@ func Test_metricBuilder_baddata(t *testing.T) {
 		}
 	})
 
-	t.Run("summary-datapoint-no-quantile-label", func(t *testing.T){
+	t.Run("summary-datapoint-no-quantile-label", func(t *testing.T) {
 		mc := newMockMetadataCache(testMetadata)
 		b := newMetricBuilder(testNode, mc, testLogger)
-		if err := b.AddDataPoint(createLabels("summary_test", "k", "v"), startTs, 123); err != nil{
+		if err := b.AddDataPoint(createLabels("summary_test", "k", "v"), startTs, 123); err != nil {
 			t.Errorf("expecting nil for the first time to trigger cache, but get error %v", err)
 		}
 		if err := b.AddDataPoint(createLabels("summary_test", "k", "v"), startTs+interval, 123); err != errEmptyBoundaryLabel {
 			t.Error("expecting errEmptyBoundaryLabel error, but get nil")
 		}
 	})
-
 
 }
 
@@ -1857,8 +1856,8 @@ func Test_dpgSignature(t *testing.T) {
 		})
 	}
 
-	// this is important for caching start values, as new metrics with new tag of a same group can come up in a 2nd run, 
-	// however, its order within the group is not predictable. we need to have a way to generate a stable key even if 
+	// this is important for caching start values, as new metrics with new tag of a same group can come up in a 2nd run,
+	// however, its order within the group is not predictable. we need to have a way to generate a stable key even if
 	// the total number of keys changes in between different scrape runs
 	t.Run("knownLabelKeys updated", func(t *testing.T) {
 		ls := labels.FromStrings("a", "va")
